@@ -8,6 +8,8 @@
 
 Analyze how revenue is generated and identify opportunities to increase it using data-driven insights.
 
+Focus on combining SQL and Python to perform end-to-end exploratory data analysis and customer segmentation.
+
 ---
 
 ## 🧰 Tech Stack
@@ -16,6 +18,7 @@ Analyze how revenue is generated and identify opportunities to increase it using
 * 🗄️ PostgreSQL
 * 🔗 SQLAlchemy
 * 📓 Jupyter Notebook
+* 🔄 SQL + Python integration
 
 ---
 
@@ -38,70 +41,45 @@ retail-sales-intelligence/
 
 ## 📦 Dataset
 
-This project uses the Brazilian E-Commerce Public Dataset (Olist).
+This project uses the Brazilian E-Commerce Public Dataset (Olist):
 
-🔗 https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+🔗 [Kaggle - Brazilian E-Commerce Dataset (Olist)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
-### How to use the dataset
 
-1. Download the dataset from Kaggle
-2. Extract into: data/raw/
-3. Ensure files like:
-- olist_customers_dataset.csv
-- olist_orders_dataset.csv
-- olist_order_items_dataset.csv
-- olist_order_payments_dataset.csv
+## 🔍 Key Insights
 
-are available before running the notebook.
+### 📈 Revenue
 
-## 🔍 Key Analysis
+* Revenue grows strongly during 2017 and stabilizes in 2018.
+* Final drop likely due to incomplete data.
 
-### 📈 Revenue Analysis
+### 👥 Customers (Pareto)
 
-* Monthly revenue trend using SQL + Python
-* Strong growth in 2017, stabilization in 2018
-* Final drop likely due to incomplete data
+* ~49% of customers generate 80% of revenue.
+* Revenue is less concentrated than the classic 80/20 distribution.
 
----
+### 🛍️ Orders
 
-### 👥 Customer Analysis (Pareto)
+* Most orders contain few items.
+* Indicates opportunity to increase average basket size.
+* Shipping cost is a relevant component of order value.
 
-* ~49% of customers generate 80% of revenue
-* Revenue is **more evenly distributed** than classic 80/20
+### 🧠 Segmentation (RFM)
 
----
+* VIP and Loyal customers drive a large portion of revenue.
+* At Risk customers represent potential revenue loss.
 
-### 🛍️ Order Behavior
-
-* Most orders contain few items
-* Opportunity to increase basket size
-* Shipping costs impact profitability
-
----
-
-### 🧠 RFM Segmentation
-
-Customers segmented into:
-
-* 🟣 VIP
-* 🔵 Loyal
-* 🟡 Regular
-* 🔴 At Risk
-
-Used to:
-
-* Improve retention
-* Target marketing strategies
-* Increase customer lifetime value
 
 ---
 
 ## 📊 Visualizations
 
-* Revenue trend over time
-* Pareto distribution
-* Customer segment distribution
-* Revenue by segment
+* Monthly revenue aggregation (Python).
+* Revenue trend over time (SQL + visualization).
+* Pareto distribution of revenue.
+* Items per order distribution.
+* Customer segment distribution (RFM).
+* Revenue by customer segment.
 
 ---
 
@@ -110,7 +88,7 @@ Used to:
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/retail-sales-intelligence.git
+git clone https://github.com/FrancoFM93/retail-sales-intelligence
 cd retail-sales-intelligence
 ```
 
@@ -127,6 +105,17 @@ venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 ```
 
+### 4. How to use the dataset
+
+1. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).
+2. Extract into: data/raw/
+3. Ensure files like:
+- olist_customers_dataset.csv
+- olist_orders_dataset.csv
+- olist_order_items_dataset.csv
+- olist_order_payments_dataset.csv
+
+are available before running the notebook.
 ---
 
 ## 📌 Future Improvements
