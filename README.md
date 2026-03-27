@@ -12,10 +12,9 @@ Analyze how revenue is generated and identify opportunities to increase it using
 
 ## 🧰 Tech Stack
 
-* 🐍 Python (Pandas, NumPy)
+* 🐍 Python (Pandas, NumPy, Matplotlib)
 * 🗄️ PostgreSQL
 * 🔗 SQLAlchemy
-* 📈 Matplotlib
 * 📓 Jupyter Notebook
 
 ---
@@ -43,7 +42,7 @@ This project uses the Brazilian E-Commerce Public Dataset (Olist).
 
 🔗 https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 
-### How to use
+### How to use the dataset
 
 1. Download the dataset from Kaggle
 2. Extract into: data/raw/
@@ -127,16 +126,6 @@ venv\Scripts\activate   # Windows
 ```bash
 pip install -r requirements.txt
 ```
-
----
-
-## 🧠 How to Explain This Project (Interview)
-
-* Built an end-to-end data analysis pipeline using Python and PostgreSQL
-* Designed SQL queries to answer business questions
-* Identified revenue concentration and customer segments
-* Applied RFM analysis for customer segmentation
-* Generated actionable business insights from raw data
 
 ---
 
