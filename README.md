@@ -1,149 +1,100 @@
 # Retail Sales Intelligence
 
-Data analysis project focused on understanding revenue drivers and customer behavior in an e-commerce dataset, with an interactive Streamlit dashboard.
-
----
+Retail Sales Intelligence is an interactive Streamlit application for analyzing revenue, customer behavior, and RFM segmentation using the Brazilian E-Commerce Public Dataset by Olist.
 
 ## Objective
 
-Analyze how revenue is generated and identify opportunities to increase it using data-driven insights.
+Analyze revenue generation, customer behavior, purchase patterns, and RFM segmentation to identify business opportunities.
 
-Combines SQL and Python to perform end-to-end exploratory data analysis, customer segmentation, and interactive visualization.
+## Live Demo
 
----
+Live demo: To be added after deployment.
 
-## Tech Stack
+## Application
 
-* Python (Pandas, NumPy, Matplotlib, Seaborn)
-* Streamlit
-* PostgreSQL
-* SQLAlchemy
-* Jupyter Notebook
+The dashboard includes four pages:
 
----
+- **Home** - Summary metrics for revenue, orders, customers, and average order value, plus revenue and segment overviews.
+- **Revenue** - Monthly revenue trends with year filtering and a detailed monthly breakdown.
+- **Customers** - Revenue concentration through Pareto analysis and the distribution of items per order.
+- **Segmentation** - RFM customer segments, segment-level revenue and customer counts, a recency-versus-monetary view, and customer drill-down.
 
-## Project Structure
+## Technology Stack
 
-```
-retail-sales-intelligence/
- ┣ app/
- ┃ ┣ Home.py                  # Dashboard home — KPIs + overview charts
- ┃ ┗ pages/
- ┃   ┣ 1_Revenue.py           # Monthly revenue trend with year filter
- ┃   ┣ 2_Customers.py         # Pareto analysis + items per order
- ┃   ┗ 3_Segmentation.py      # RFM segmentation explorer
- ┣ src/
- ┃ ┣ data_loader.py           # CSV loaders for all Olist tables
- ┃ ┣ transforms.py            # Revenue aggregations, Pareto, merges
- ┃ ┗ segmentation.py          # RFM scoring and customer segmentation
- ┣ notebooks/
- ┃ ┗ 01_data_loading.ipynb    # Original EDA and analysis
- ┣ data/                      # Raw data (ignored in Git)
- ┣ sql/                       # SQL queries
- ┣ models/                    # Future ML models
- ┣ requirements.txt
- ┗ README.md
-```
-
----
+- Python
+- Pandas
+- Matplotlib
+- Streamlit
 
 ## Dataset
 
-This project uses the Brazilian E-Commerce Public Dataset (Olist):
+The project uses the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).
 
-[Kaggle - Brazilian E-Commerce Dataset (Olist)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+For reproducibility and deployment, the repository includes the four Olist CSV files used by the application:
 
----
+- `olist_customers_dataset.csv`
+- `olist_orders_dataset.csv`
+- `olist_order_items_dataset.csv`
+- `olist_order_payments_dataset.csv`
 
-## Setup
+These files are stored in `data/raw/`.
 
-### 1. Clone repository
+## Project Structure
 
-```bash
-git clone https://github.com/FrancoFM93/retail-sales-intelligence
-cd retail-sales-intelligence
+```text
+retail-sales-intelligence/
+|-- app/
+|   |-- Home.py
+|   `-- pages/
+|       |-- 1_Revenue.py
+|       |-- 2_Customers.py
+|       `-- 3_Segmentation.py
+|-- data/
+|   `-- raw/
+|       |-- olist_customers_dataset.csv
+|       |-- olist_orders_dataset.csv
+|       |-- olist_order_items_dataset.csv
+|       `-- olist_order_payments_dataset.csv
+|-- notebooks/
+|   `-- 01_data_loading.ipynb
+|-- src/
+|   |-- __init__.py
+|   |-- data_loader.py
+|   |-- segmentation.py
+|   `-- transforms.py
+|-- .gitignore
+|-- README.md
+`-- requirements.txt
 ```
 
-### 2. Create environment
+## Local Setup
 
-```bash
-python -m venv venv
-venv\Scripts\activate   # Windows
-```
+From the repository root in Windows PowerShell:
 
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Add the dataset
-
-1. Download from [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce).
-2. Extract into `data/raw/` — the following files are required:
-   - `olist_customers_dataset.csv`
-   - `olist_orders_dataset.csv`
-   - `olist_order_items_dataset.csv`
-   - `olist_order_payments_dataset.csv`
-
-### 5. Run the dashboard
-
-```bash
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -r requirements.txt
 streamlit run app/Home.py
 ```
 
-Opens at **http://localhost:8501**
-
----
-
-## Dashboard Pages
-
-### Home
-Overview of the full dataset: total revenue, orders, customers, average order value, revenue trend, and revenue by RFM segment.
-
-### Revenue
-Monthly revenue time-series with year filter and expandable breakdown table.
-
-### Customers
-- **Pareto curve** — interactive slider to see what % of customers drives a chosen % of revenue
-- **Items per order** — distribution histogram with configurable cap
-
-### Segmentation
-- Per-segment KPIs (customer count + revenue)
-- Bar charts for customer distribution and revenue by segment
-- Scatter plot: Recency vs Monetary, colored by segment
-- Drill-down table to explore individual customers within a segment
-
----
+The application opens at `http://localhost:8501`.
 
 ## Key Insights
 
-### Revenue
-* Revenue grows strongly during 2017 and stabilizes in 2018.
-* Final drop likely due to incomplete data.
+- Revenue increased strongly throughout 2017 and remained relatively stable during most of 2018.
+- Approximately half of customers generated 80% of total revenue, showing less concentration than the traditional 80/20 pattern.
+- Most orders contained a single item, suggesting an opportunity to improve average basket size.
+- VIP and Loyal customers represented a significant share of revenue, while At Risk customers showed potential retention opportunities.
 
-### Customers (Pareto)
-* ~49% of customers generate 80% of revenue.
-* Revenue is less concentrated than the classic 80/20 rule.
+## Future Improvements
 
-### Orders
-* Most orders contain a single item — opportunity to increase average basket size.
-* Shipping cost is a relevant component of order value.
-
-### Segmentation (RFM)
-* VIP and Loyal customers drive the majority of revenue.
-* At Risk customers (~24% of the base) represent significant potential revenue loss.
-
----
-
-## Roadmap
-
-* Automated ETL pipeline
-* Customer churn prediction model
-* Product-level analysis
-
----
+- Product and category-level analysis
+- Automated data preparation
+- Customer churn modeling
+- Additional interactive filters
 
 ## Author
 
 FrancoFM93
+

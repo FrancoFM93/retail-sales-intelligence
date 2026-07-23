@@ -5,8 +5,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 import streamlit as st
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
 from src.data_loader import load_all
 from src.segmentation import compute_rfm
 

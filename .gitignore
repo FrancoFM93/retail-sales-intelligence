@@ -1,11 +1,18 @@
 # Python
-__pycache__/
-*.pyc
-*.pyo
+**pycache**/
+*.py[cod]
 
 # Virtual environment
 venv/
+.venv/
 .env/
+.env
+.env.*
+!.env.example
+
+# Streamlit secrets
+.streamlit/secrets.toml
+secrets.toml
 
 # Jupyter
 .ipynb_checkpoints/
@@ -18,7 +25,18 @@ Thumbs.db
 .vscode/
 
 # Data (IMPORTANT - don't upload raw data)
-data/raw/
+data/raw/*
+!data/raw/olist_customers_dataset.csv
+!data/raw/olist_orders_dataset.csv
+!data/raw/olist_order_items_dataset.csv
+!data/raw/olist_order_payments_dataset.csv
+
+data/processed/
+*.parquet
+
+# Generated models
+*.pkl
+*.joblib
 
 # Logs
 *.log
