@@ -8,7 +8,7 @@ Analyze revenue generation, customer behavior, purchase patterns, and RFM segmen
 
 ## Live Demo
 
-Live demo: To be added after deployment.
+[Live Demo](https://retail-sales-intelligence-ejphgxkasfkeauxrpdcrmd.streamlit.app/)
 
 ## Application
 
