@@ -2,7 +2,12 @@ import unittest
 
 import pandas as pd
 
-from src.transforms import build_full_df, get_monthly_revenue, get_pareto
+from src.transforms import (
+    build_full_df,
+    get_items_per_order,
+    get_monthly_revenue,
+    get_pareto,
+)
 
 
 class RevenueTests(unittest.TestCase):
@@ -63,6 +68,34 @@ class ParetoTests(unittest.TestCase):
         # brings cumulative revenue from 60% to 90%.
         self.assertEqual(result["cumulative_pct"].tolist(), [60.0, 90.0, 100.0])
         self.assertAlmostEqual(result.loc[1, "customer_pct"], 200 / 3)
+
+
+class ItemsPerOrderTests(unittest.TestCase):
+    def test_counts_items_only_for_valid_orders(self):
+        order_items = pd.DataFrame(
+            {
+                "order_id": [
+                    "multi_item",
+                    "multi_item",
+                    "multi_item",
+                    "single_item",
+                    "canceled",
+                    "unavailable",
+                ],
+                "order_item_id": [1, 2, 3, 1, 1, 1],
+            }
+        )
+        valid_order_ids = pd.Series(["multi_item", "single_item"])
+
+        result = get_items_per_order(order_items, valid_order_ids)
+
+        expected = pd.DataFrame(
+            {
+                "order_id": ["multi_item", "single_item"],
+                "item_count": [3, 1],
+            }
+        )
+        pd.testing.assert_frame_equal(result, expected)
 
 
 if __name__ == "__main__":

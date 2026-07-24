@@ -70,12 +70,11 @@ def get_pareto(customer_revenue: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_items_per_order(
-    order_items: pd.DataFrame, valid_order_ids: pd.Series | None = None
+    order_items: pd.DataFrame, valid_order_ids: pd.Series
 ) -> pd.DataFrame:
-    items = order_items
-    if valid_order_ids is not None:
-        # Match basket metrics to the same delivered-order population used
-        # by the revenue analysis.
-        items = items[items["order_id"].isin(valid_order_ids)]
+    # Match basket metrics to the same delivered-order population used by the
+    # revenue analysis. Requiring these IDs prevents excluded orders from
+    # silently entering the calculation.
+    items = order_items[order_items["order_id"].isin(valid_order_ids)]
     # Each input row is one item; group size therefore becomes items per order.
     return items.groupby("order_id").size().reset_index(name="item_count")
