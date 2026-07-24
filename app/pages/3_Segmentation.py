@@ -1,10 +1,12 @@
 import sys
 from pathlib import Path
 
+# This page is one directory deeper than Home.py: pages -> app -> repository root.
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 import streamlit as st
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 from src.data_loader import load_all
 from src.segmentation import compute_rfm
 
@@ -20,6 +22,8 @@ SEGMENT_COLORS = {
 
 @st.cache_data
 def load():
+    # RFM is the slowest transformation, so caching prevents recomputing it
+    # whenever the user changes the segment selector.
     customers, orders, order_items, payments = load_all()
     return compute_rfm(orders, payments, customers)
 
@@ -27,11 +31,29 @@ def load():
 rfm = load()
 
 st.title("🧠 RFM Segmentation")
+st.caption("Delivered orders through August 2018; recency is measured from September 1, 2018.")
+with st.expander("How segments are defined"):
+    st.markdown(
+        """
+        - **VIP:** repeat buyers in the top two recency and monetary bands.
+        - **Loyal:** other repeat buyers in the top three recency bands.
+        - **At Risk:** customers in the bottom two recency bands.
+        - **Regular:** all remaining customers, including one-time buyers.
+        """
+    )
 st.divider()
 
 # --- Overview metrics ---
 segment_counts = rfm["segment"].value_counts()
 segment_revenue = rfm.groupby("segment")["monetary"].sum()
+priority_segments = ["VIP", "Loyal"]
+# Boolean means are proportions because True behaves like 1 and False like 0.
+priority_customer_share = rfm["segment"].isin(priority_segments).mean() * 100
+priority_revenue_share = (
+    segment_revenue.reindex(priority_segments, fill_value=0).sum()
+    / segment_revenue.sum()
+    * 100
+)
 
 cols = st.columns(len(SEGMENT_COLORS))
 for col, (seg, color) in zip(cols, SEGMENT_COLORS.items()):
@@ -43,6 +65,17 @@ for col, (seg, color) in zip(cols, SEGMENT_COLORS.items()):
         delta=f"R$ {rev:,.0f}",
         delta_color="off",
     )
+
+st.subheader("Key Takeaway")
+st.info(
+    f"VIP and Loyal customers represent **{priority_customer_share:.1f}% of customers** "
+    f"and **{priority_revenue_share:.1f}% of delivered-order payment value**. These "
+    "segments are intentionally selective because every member is a repeat buyer."
+)
+st.caption(
+    "At Risk identifies low-recency customers, not confirmed churn. Re-engagement "
+    "campaigns should be treated as experiments and measured against a control group."
+)
 
 st.divider()
 
@@ -59,9 +92,10 @@ with col_left:
     ax.bar_label(bars, fmt="{:,.0f}", padding=3)
     ax.set_ylabel("Customers")
     ax.set_title("Customers per Segment", fontweight="bold")
+    ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     fig.tight_layout()
-    st.pyplot(fig)
+    st.pyplot(fig, width="stretch")
 
 with col_right:
     st.subheader("Revenue by Segment")
@@ -71,9 +105,12 @@ with col_right:
     ax2.bar_label(bars2, fmt="R${:,.0f}", padding=3, fontsize=8)
     ax2.set_ylabel("Revenue (R$)")
     ax2.set_title("Revenue per Segment", fontweight="bold")
+    ax2.yaxis.set_major_formatter(
+        mticker.FuncFormatter(lambda value, _: f"R${value / 1_000_000:.0f}M")
+    )
     ax2.grid(axis="y", linestyle="--", alpha=0.4)
     fig2.tight_layout()
-    st.pyplot(fig2)
+    st.pyplot(fig2, width="stretch")
 
 st.divider()
 
@@ -88,24 +125,34 @@ for seg, color in SEGMENT_COLORS.items():
         c=color, label=seg, alpha=0.5, s=15, edgecolors="none"
     )
 ax3.set_xlabel("Recency (days since last purchase)")
-ax3.set_ylabel("Monetary (R$)")
+ax3.set_ylabel("Monetary Value (R$, log scale)")
+# A log scale compresses large monetary outliers while keeping low-value
+# customers visible. Equal vertical distances represent ratios, not differences.
+ax3.set_yscale("log")
+ax3.yaxis.set_major_formatter(mticker.FuncFormatter(lambda value, _: f"R${value:,.0f}"))
 ax3.set_title("Customer Scatter by Segment", fontweight="bold")
 ax3.legend()
 ax3.grid(linestyle="--", alpha=0.3)
 fig3.tight_layout()
-st.pyplot(fig3)
+st.pyplot(fig3, width="stretch")
 
 st.divider()
 
 # --- Drill-down table ---
 st.subheader("Explore Segment")
 selected = st.selectbox("Select segment", list(SEGMENT_COLORS.keys()))
+# The selector triggers a rerun; this filter then rebuilds the displayed table
+# for only the chosen segment.
 subset = rfm[rfm["segment"] == selected][
     ["customer_unique_id", "recency", "frequency", "monetary", "R_score", "F_score", "M_score"]
 ].sort_values("monetary", ascending=False)
 
+display_subset = subset.copy()
+display_subset["monetary"] = display_subset["monetary"].map("R${:,.2f}".format)
+display_subset["recency"] = display_subset["recency"].map("{:.0f} days".format)
+
 st.dataframe(
-    subset.style.format({"monetary": "R${:,.2f}", "recency": "{:.0f} days"}),
-    use_container_width=True,
+    display_subset,
+    width="stretch",
     hide_index=True,
 )
